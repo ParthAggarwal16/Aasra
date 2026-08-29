@@ -1,2 +1,16 @@
+# Frontend
 node_modules/
 dist/
+
+# Backend & Environment
+.env
+!.env.example
+*.log
+*.wav
+*.mp3
+__pycache__/
+*.pyc
+sih/
+.vscode/
+.idea/
+.DS_Store
