@@ -1,0 +1,85 @@
+import React from 'react';
+import { Home, HelpCircle, Calendar, Users, Phone } from 'lucide-react';
+import { BrandName, TabType } from '../types';
+
+interface BottomNavProps {
+  activeTab: TabType;
+  brandName: BrandName;
+  onTabChange: (tab: TabType) => void;
+}
+
+export const BottomNav: React.FC<BottomNavProps> = ({
+  activeTab,
+  brandName,
+  onTabChange,
+}) => {
+  const tabs = [
+    {
+      id: 'home' as TabType,
+      label: 'Home',
+      icon: Home,
+    },
+    {
+      id: 'help' as TabType,
+      label: 'Madad/Help',
+      icon: HelpCircle,
+    },
+    {
+      id: 'activity' as TabType,
+      label: 'Activity',
+      icon: Calendar,
+    },
+    {
+      id: 'community' as TabType,
+      label: brandName,
+      icon: Users,
+    },
+    {
+      id: 'call' as TabType,
+      label: 'Call',
+      icon: Phone,
+    },
+  ];
+
+  return (
+    <nav
+      id="bottom-navigation-bar"
+      className="sticky bottom-0 z-30 bg-[#fef8f3]/95 backdrop-blur-md border-t border-[#ded9d4] px-3 py-2 flex items-center justify-around"
+      role="navigation"
+      aria-label="Main Navigation"
+    >
+      {tabs.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.id;
+        return (
+          <button
+            key={tab.id}
+            id={`nav-tab-${tab.id}`}
+            type="button"
+            onClick={() => onTabChange(tab.id)}
+            className={`flex flex-col items-center justify-center min-w-[60px] py-1 px-1.5 rounded-xl transition-all ${
+              isActive
+                ? 'text-[#9e3d00] font-bold'
+                : 'text-[#594238]/80 hover:text-[#1d1b19] font-medium'
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-xl transition-all ${
+                isActive ? 'bg-[#ffddb9]/60 text-[#9e3d00]' : ''
+              }`}
+            >
+              <Icon size={22} strokeWidth={isActive ? 2.4 : 1.8} />
+            </div>
+            <span
+              className={`text-[12px] mt-0.5 tracking-tight whitespace-nowrap ${
+                isActive ? 'font-bold text-[#9e3d00]' : 'text-[#594238]'
+              }`}
+            >
+              {tab.label}
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+};
