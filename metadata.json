@@ -1,6 +1,0 @@
-{
-  "name": "AASRA - Saathi",
-  "description": "AI-Assisted Support & Risk Assessment - Compassionate digital companion for mental well-being, community support, and emergency assistance.",
-  "requestFramePermissions": ["microphone"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
