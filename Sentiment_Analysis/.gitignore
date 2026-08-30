@@ -1,0 +1,26 @@
+# Environment & Secrets (NEVER commit your actual API keys)
+.env
+*.env
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs & OS artifacts
+*.log
+.DS_Store
+Thumbs.db
