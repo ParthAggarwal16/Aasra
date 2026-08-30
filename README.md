@@ -1,26 +1,183 @@
 
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# AASRA / SAATHI: AI-Powered Dynamic Mental Health Monitoring & Distress Prediction System
 
-# Run and deploy your AI Studio app
+> **"Track the case. Watch the person. Act before crisis."**
+> A privacy-first, multimodal AI early-warning and trauma-informed decision support platform for victims of atrocities.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/548153de-6057-4043-8e71-daf45829776d
+# 🏛️ CURRENT ARCHITECTURE
 
-## Run Locally
+The AASRA platform is engineered as a unified, full-stack AI-driven decision-support system. It integrates a **responsive multi-device React client**, a **low-latency Conversational Voice Engine**, a **streaming LangChain AI chatbot**, and a **multimodal distress prediction engine (Groq AI `openai/gpt-oss-120b`)** served through a **single-port FastAPI server (Port 8000)**.
 
-**Prerequisites:**  Node.js
+---
 
+## 1. High-Level System Blueprint
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```mermaid
+flowchart TD
+    subgraph Client ["📱 Client Application Layer (React 19 + TypeScript)"]
+        UI["Responsive Web UI (Mobile / Tablet / Desktop)"]
+        VoiceModal["🎙️ Conversational Voice Companion (Live Waveform Visualizer)"]
+        ChatModal["💬 Streaming AI Saathi Chatbot (SSE Token Stream + Markdown Parser)"]
+        SpeechUtil["🔊 Web Speech Audio Narration & TTS"]
+    end
 
-   # SIH PROJECT MASTER DOCUMENTATION
+    subgraph Backend ["⚡ Unified FastAPI Server (Port 8000)"]
+        Server["voice_agent/app.py"]
+        VoiceRoute["POST /api/voice-turn"]
+        ChatRoute["POST /api/chat-stream"]
+        HealthRoute["GET /api/health"]
+        ConfigRoute["GET /api/config"]
+        StaticRoute["Mount / & /assets (React Single-Page App)"]
+    end
+
+    subgraph Intelligence ["🧠 Multimodal AI & Distress Intelligence Engine"]
+        GroqLLM["Groq AI Core (openai/gpt-oss-120b)"]
+        AcousticEngine["Acoustic Analyzer (Pitch, Jitter, Shimmer, HNR, Speaking Rate)"]
+        DDS_Engine["Dynamic Distress Scoring (0–100 DDS & Risk Tiers)"]
+        LangChainAgent["LangChain Conversational Retrieval Agent"]
+        TTS_Synth["Trauma-Informed Empathetic Voice Synthesis"]
+    end
+
+    subgraph Ecosystem ["🛡️ Institutional & National Support Pathways"]
+        TeleMANAS["Tele-MANAS (14416 / 1800-891-4416)"]
+        Section15A["Section 15A SC/ST PoA Act Witness Protection & Relief"]
+        LegalAid["NALSA / DLSA Free Legal Aid"]
+        ERSS["112 Emergency Response Support System"]
+    end
+
+    UI --> StaticRoute
+    VoiceModal --> VoiceRoute
+    ChatModal --> ChatRoute
+
+    VoiceRoute --> AcousticEngine
+    VoiceRoute --> GroqLLM
+    VoiceRoute --> DDS_Engine
+    VoiceRoute --> TTS_Synth
+
+    ChatRoute --> LangChainAgent
+    LangChainAgent --> GroqLLM
+
+    DDS_Engine --> UI
+    TTS_Synth --> VoiceModal
+    GroqLLM --> ChatModal
+
+    DDS_Engine -.-> TeleMANAS
+    DDS_Engine -.-> Section15A
+    DDS_Engine -.-> LegalAid
+    DDS_Engine -.-> ERSS
+```
+
+---
+
+## 2. Layer-by-Layer Architectural Breakdown
+
+### 2.1 Client Application Layer (`src/`)
+* **Framework**: React 19 + TypeScript + Tailwind CSS + Lucide Icons.
+* **Multi-Device Responsive Layout**:
+  * **Desktop / Tablet**: Expands to an ambient, widescreen layout (`max-w-5xl` container) with integrated top navigation (`Home`, `Madad/Help`, `Activity`, `Community`, `Emergency`), a 4-column mood check-in grid, and wide story panels.
+  * **Mobile Devices**: Automatically renders touch-optimized bottom navigation with high-contrast accessibility actions.
+* **Core Components**:
+  * `CompanionCallModal.tsx`: Real-time two-way conversational voice call with live HTML5 Canvas audio waveform visualizer, Web Speech recognition, Groq AI backend response synthesis, live subtitles ("You Spoke" & "Aasra Companion"), and call controls (Accept, Mute, Speaker, Hangup).
+  * `ChatBotModal.tsx`: Token-by-token streaming AI support assistant using Server-Sent Events, custom markdown formatting (no raw asterisks), animated 3-dot typing indicators (`• • •`), and quick legal/mental health prompt chips.
+  * `SpeakerButton.tsx` & `src/utils/speech.ts`: Accessibility text-to-speech engine providing full Hindi/English voice narration for illiterate and visually-impaired beneficiaries.
+
+---
+
+### 2.2 Unified Server Layer (`voice_agent/app.py`)
+* **Framework**: FastAPI + Uvicorn + Pydantic.
+* **Single-Port Architecture (Port 8000)**:
+  * Serves the compiled React production bundle (`dist/`) directly on `/` and `/assets`.
+  * Hosts REST and Server-Sent Events (SSE) streaming endpoints:
+    * `POST /api/voice-turn`: Receives user transcripts and audio features, executes Groq AI distress scoring, and generates empathetic spoken dialogue.
+    * `POST /api/chat-stream`: Real-time token streaming from LangChain agent.
+    * `GET /api/config`: Exposes active LLM and voice agent configurations.
+    * `GET /api/health`: Real-time health check for audio libraries and Groq AI connectivity.
+
+---
+
+### 2.3 Multimodal AI & Distress Intelligence Engine
+* **Large Language Model**: Groq AI `openai/gpt-oss-120b` providing sub-500ms conversational reasoning.
+* **Acoustic Biomarker Signal Processing (`voice_agent/acoustic_analyzer.py`)**:
+  * Measures fundamental frequency ($F_0$), vocal jitter (frequency perturbation), shimmer (amplitude perturbation), and harmonics-to-noise ratio (HNR) to identify trembling, hesitation, or agitation.
+* **Dynamic Distress Index (DDS: 0–100)**:
+  * 🟢 **Low Risk (0–30)**: Routine wellness check-ins and positive reinforcement.
+  * 🟡 **Moderate Risk (31–60)**: Grounding breathwork exercises and counselor scheduling.
+  * 🟠 **High Risk (61–85)**: Legal aid referral and Section 15A Witness Protection activation.
+  * 🔴 **Critical Risk (86–100)**: Immediate automated escalation to **Tele-MANAS (14416)** and **Emergency Response (112)**.
+
+---
+
+## 3. Directory Structure & File Catalog
+
+```text
+Aasra/
+├── src/                                # React 19 Frontend Application
+│   ├── App.tsx                         # Root app router, modal manager & global state
+│   ├── main.tsx                        # Client bootstrap entry point
+│   ├── types.ts                        # TypeScript domain definitions & interfaces
+│   ├── index.css                       # Global Tailwind CSS and glassmorphism styling
+│   ├── components/
+│   │   ├── Header.tsx                  # Responsive header with desktop nav & emblem
+│   │   ├── BottomNav.tsx               # Mobile-optimized bottom navigation
+│   │   ├── CompanionCallModal.tsx      # Real-time conversational voice call modal
+│   │   ├── ChatBotModal.tsx            # Streaming AI assistant with markdown parsing
+│   │   └── SpeakerButton.tsx           # Accessibility audio narration button
+│   ├── screens/
+│   │   ├── HomeScreen.tsx              # Daily mood check-in & 4-quadrant grid
+│   │   ├── HelpHubScreen.tsx           # Central support & assistance dispatch hub
+│   │   ├── ActivityScreen.tsx          # 2-minute paced breathing exercise screen
+│   │   ├── CommunityScreen.tsx         # Anonymous peer recovery stories feed
+│   │   ├── CompanionConnectScreen.tsx  # Step 3 Voice call invitation
+│   │   ├── ConsentScreen.tsx           # Step 2 Informed consent & privacy safeguards
+│   │   ├── CreatePostScreen.tsx        # Voice/text anonymous story submission
+│   │   ├── EmergencyCallScreen.tsx     # One-touch emergency helplines
+│   │   ├── OfflineModeScreen.tsx       # Low-connectivity fallback contact list
+│   │   ├── PhoneLoginScreen.tsx        # Step 1 Frictionless phone authentication
+│   │   ├── PrivacySettingsScreen.tsx   # Privacy, brand name & call settings
+│   │   ├── StoryDetailScreen.tsx       # Extended survivor testimonial reader
+│   │   ├── SuccessScreen.tsx           # Celebration & submission confirmation
+│   │   └── WelcomeScreen.tsx           # Warm welcome & initial accessibility greeting
+│   └── utils/
+│       └── speech.ts                   # Web Speech Synthesis helper
+├── voice_agent/                        # Python Voice Agent & FastAPI Server
+│   ├── app.py                          # Unified FastAPI server & React static host
+│   ├── voice_engine.py                 # Groq AI conversational voice brain & DDS engine
+│   ├── acoustic_analyzer.py            # Acoustic biomarker feature extraction
+│   ├── config.py                       # Pydantic configuration & environment settings
+│   ├── schemas.py                      # Voice turn request/response schemas
+│   └── test_voice_agent.py             # Pytest suite for voice engine & DDS scoring
+├── chatbot/                            # LangChain Support Agent
+│   ├── agent.py                        # Context-aware conversational retrieval agent
+│   ├── app.py                          # Standalone chatbot FastAPI app
+│   ├── config.py                       # Chatbot LLM settings
+│   ├── schemas.py                      # Query request & response models
+│   └── test_chatbot.py                 # Pytest suite for chatbot streaming
+├── dist/                               # Compiled production React build
+├── package.json                        # Node dependencies & Vite build scripts
+├── vite.config.ts                      # Vite build configuration & API proxy
+├── requirements.txt                    # Python backend dependencies
+└── README.md                           # Master documentation & architecture guide
+```
+
+---
+
+## 4. Running Locally
+
+### Single Unified Command (Production Server)
+```bash
+# 1. Build React frontend bundle
+npm run build
+
+# 2. Start Unified FastAPI Server (serves React App + AI APIs)
+python -m uvicorn voice_agent.app:app --host 127.0.0.1 --port 8000 --reload
+```
+👉 Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
+
+---
+
+# SIH PROJECT MASTER DOCUMENTATION
 # AI-Powered Dynamic Mental Health Monitoring and Distress Prediction System for Victims of Atrocities
 
 **Purpose:** This document is the single source of truth for understanding, discussing, designing, pitching, implementing, and evaluating the SIH project.

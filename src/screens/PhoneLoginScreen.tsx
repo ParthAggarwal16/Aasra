@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/screens/PhoneLoginScreen.tsx
+ * Description: Step 1 Phone Authentication & Verification Screen.
+ * Provides frictionless phone number input and OTP verification simulation.
+ * ================================================================================
+ */
+
 import React, { useState } from 'react';
 import { Smartphone, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

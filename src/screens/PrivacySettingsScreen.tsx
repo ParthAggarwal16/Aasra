@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/screens/PrivacySettingsScreen.tsx
+ * Description: User Privacy, Confidentiality & App Customization Screen.
+ * Configures check-in call preferences, community post pseudonymity, and brand masking.
+ * ================================================================================
+ */
+
 import React, { useState } from 'react';
 import { Lock, Phone, Users, Check, ArrowRight, Shield, Globe, Tag } from 'lucide-react';
 import { UserSettings } from '../types';

@@ -1,3 +1,14 @@
+/**
+ * ================================================================================
+ * File: src/components/CompanionCallModal.tsx
+ * Description: Real-time Conversational Voice Companion Call Modal Component.
+ * Features live microphone audio capture, HTML5 Canvas audio frequency waveform
+ * visualizer, Web Speech / Groq AI integration (/api/voice-turn), dynamic distress
+ * scoring display, live subtitles ("You Spoke" & "Aasra Companion"), and call controls
+ * (Accept, Mute, Speaker, Hang up).
+ * ================================================================================
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Sparkles, UserCheck, ShieldAlert, Heart } from 'lucide-react';
 import { speakText, stopSpeaking } from '../utils/speech';

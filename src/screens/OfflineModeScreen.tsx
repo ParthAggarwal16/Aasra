@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/OfflineModeScreen.tsx
+ * Description: Low-Connectivity & Offline Emergency Fallback Screen.
+ * Provides direct cellular dialing numbers for key local contacts and government
+ * hotlines when data connectivity is unavailable.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { CloudOff, Phone, Contact2, Plus, ShieldAlert } from 'lucide-react';
 import { BrandName } from '../types';

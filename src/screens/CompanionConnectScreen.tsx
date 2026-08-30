@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/CompanionConnectScreen.tsx
+ * Description: Step 3 Companion Connect Call Invitation Screen.
+ * Invites the user to connect with an empathetic AI Saathi companion via voice call,
+ * with privacy assurance and audio narration.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { Phone, Shield, UserCheck, Heart } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

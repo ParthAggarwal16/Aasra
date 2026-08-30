@@ -1,3 +1,13 @@
+/**
+ * ================================================================================
+ * File: src/App.tsx
+ * Description: Root React Application Component for the AASRA Platform.
+ * Manages global screen routing (Home, Help Hub, Activity, Community, Emergency,
+ * Onboarding), persistent user settings, active tab state, simulated and live voice
+ * companion calls, and the global floating AI Saathi support chatbot.
+ * ================================================================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';

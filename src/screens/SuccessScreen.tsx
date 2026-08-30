@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/screens/SuccessScreen.tsx
+ * Description: Submission Confirmation & Encouragement Screen.
+ * Displays celebration animations (confetti), audio confirmation, and home navigation.
+ * ================================================================================
+ */
+
 import React, { useEffect } from 'react';
 import { Check, Home } from 'lucide-react';
 import confetti from 'canvas-confetti';

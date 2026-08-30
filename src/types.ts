@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/types.ts
+ * Description: TypeScript domain definitions, interfaces, and shared state types
+ * across the AASRA application (ScreenType, TabType, MoodType, CommunityPost, UserSettings).
+ * ================================================================================
+ */
+
 export type ScreenType =
   | 'welcome'
   | 'phone_login'

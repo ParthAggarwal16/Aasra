@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/ConsentScreen.tsx
+ * Description: Step 2 Informed Consent & Privacy Safeguards Screen.
+ * Clearly explains data privacy principles, voluntary participation, and rights
+ * before onboarding users into the AASRA platform.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { Heart, Hand, Shield, HandMetal, ArrowRight } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

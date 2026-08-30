@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/ActivityScreen.tsx
+ * Description: Grounding & Guided Breathing Activity Screen.
+ * Provides interactive 2-minute paced breathing exercises (Inhale, Hold, Exhale)
+ * with animated visual cues, speech guidance, and completion celebrations.
+ * ================================================================================
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Play, Pause, RotateCcw, CheckCircle, Sparkles, Heart } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

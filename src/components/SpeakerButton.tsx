@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/components/SpeakerButton.tsx
+ * Description: Accessibility Audio Read-Aloud Button Component. Triggers speech
+ * synthesis for headings, cards, and instructions across the AASRA UI.
+ * ================================================================================
+ */
+
 import React, { useEffect, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { speakText, stopSpeaking, subscribeSpeechState } from '../utils/speech';

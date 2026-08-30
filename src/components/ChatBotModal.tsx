@@ -1,3 +1,13 @@
+/**
+ * ================================================================================
+ * File: src/components/ChatBotModal.tsx
+ * Description: Interactive Streaming AI Support Chatbot Modal Component.
+ * Features Server-Sent Events token-by-token streaming from /api/chat-stream,
+ * custom markdown rendering (headers, bold, bullet points without raw asterisks),
+ * animated 3-dot typing indicator (• • •), quick suggestion prompts, and smooth scrolling.
+ * ================================================================================
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, X, Sparkles, User, Heart, Shield } from 'lucide-react';
 

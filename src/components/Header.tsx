@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/components/Header.tsx
+ * Description: Global Header Component with responsive branding, desktop navigation
+ * links, back button controls, offline simulator toggle, screen audio narration,
+ * and user profile access.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { User, Wifi, WifiOff, Home, HelpCircle, Calendar, Users, Phone } from 'lucide-react';
 import { SpeakerButton } from './SpeakerButton';

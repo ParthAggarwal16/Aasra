@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/CreatePostScreen.tsx
+ * Description: Anonymous Community Story & Thought Creation Screen.
+ * Allows users to write or dictate (speech-to-text) anonymous encouragement
+ * messages and recovery stories for the peer community feed.
+ * ================================================================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Mic, MicOff, Send, Image, List, ShieldCheck } from 'lucide-react';
 import { speakText } from '../utils/speech';

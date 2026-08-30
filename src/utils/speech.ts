@@ -1,5 +1,10 @@
 /**
- * Speech synthesis helper for AASRA / Saathi accessibility audio narration.
+ * ================================================================================
+ * File: src/utils/speech.ts
+ * Description: Web Speech Synthesis & Accessibility Narration Helper.
+ * Handles text-to-speech rendering in Hindi/English, speech state listeners,
+ * and audio interruption handling across screen navigations.
+ * ================================================================================
  */
 
 let currentUtterance: SpeechSynthesisUtterance | null = null;

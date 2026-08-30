@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/CommunityScreen.tsx
+ * Description: Peer Support & Recovery Stories Feed Screen.
+ * Displays shared survivor stories, community encouragement posts, interactive support
+ * reactions ("Sahaara dein"), and entry points to post anonymous thoughts.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { Heart, User, HeartHandshake, BookOpen, MessageSquarePlus } from 'lucide-react';
 import { CommunityPost } from '../types';

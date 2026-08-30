@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/HelpHubScreen.tsx
+ * Description: Central Support & Assistance Hub Screen.
+ * Provides quick-action navigation for Voice Companion Calls, Streaming AI Chatbot,
+ * Grounding activities, Peer community stories, and Emergency helpline dispatch.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { UserCheck, Palette, Users, PhoneCall, Bot, ArrowRight, Sparkles } from 'lucide-react';
 

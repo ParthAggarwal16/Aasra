@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/screens/StoryDetailScreen.tsx
+ * Description: Extended Survivor Story & Recovery Journey Detail Screen.
+ * Renders in-depth survivor testimonials with accessibility speech readouts and support metrics.
+ * ================================================================================
+ */
+
 import React, { useState } from 'react';
 import { ArrowLeft, Heart, BookOpen } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

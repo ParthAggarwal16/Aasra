@@ -1,3 +1,11 @@
+/**
+ * ================================================================================
+ * File: src/screens/WelcomeScreen.tsx
+ * Description: First-Time User Onboarding & Warm Welcome Screen.
+ * Introduces AASRA Saathi with accessibility speech greeting and initial start button.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { ArrowRight, HeartHandshake } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';

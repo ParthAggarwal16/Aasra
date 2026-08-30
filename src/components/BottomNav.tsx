@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/components/BottomNav.tsx
+ * Description: Mobile Bottom Navigation Bar for AASRA. Provides touch-friendly
+ * switching between Home, Help, Activity, Community, and Emergency call screens.
+ * Automatically hidden on medium and large desktop screens.
+ * ================================================================================
+ */
+
 import React from 'react';
 import { Home, HelpCircle, Calendar, Users, Phone } from 'lucide-react';
 import { BrandName, TabType } from '../types';

@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/HomeScreen.tsx
+ * Description: Primary Daily Mood Check-In and Support Recommendation Screen.
+ * Presents 4-quadrant mood check-in buttons with audio feedback, empathetic response
+ * cards, and quick navigation shortcuts to Companion Calls, Activity, and Community.
+ * ================================================================================
+ */
+
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight, PhoneCall, HeartHandshake, Smile } from 'lucide-react';
 import { MoodType } from '../types';

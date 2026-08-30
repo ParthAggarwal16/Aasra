@@ -1,3 +1,12 @@
+/**
+ * ================================================================================
+ * File: src/screens/EmergencyCallScreen.tsx
+ * Description: Emergency Helpline & Crisis Response Screen.
+ * Provides immediate one-touch dialing for Police (100 / 112), Women Helpline (1091),
+ * Ambulance (102), and Tele-MANAS (14416) with simulated in-app call routing.
+ * ================================================================================
+ */
+
 import React, { useState } from 'react';
 import { Phone, AlertCircle, PhoneCall, Check } from 'lucide-react';
 import { SpeakerButton } from '../components/SpeakerButton';
