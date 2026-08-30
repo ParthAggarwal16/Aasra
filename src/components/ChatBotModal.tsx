@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Sparkles, PhoneCall, Volume2 } from 'lucide-react';
+import { X, Sparkles, Volume2, Bot, HeartHandshake } from 'lucide-react';
 import { ChatMessage, ChatMessageType } from './chatbot/ChatMessage';
 import { QuickSuggestions } from './chatbot/QuickSuggestions';
 import { SupportEscalationCard } from './chatbot/SupportEscalationCard';
@@ -33,7 +33,7 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
     {
       id: 'welcome',
       sender: 'aasra',
-      text: 'Namaste! Main AASRA AI Saathi hoon. Main aapki baat sunne aur kanooni ya mansik sahayata dene ke liye yahan hoon. Aap kaisa mehsoos kar rahe hain?',
+      text: 'Namaste! Main AI Saathi hoon. Main aapki baat sunne aur kanooni ya mansik sahayata dene ke liye yahan hoon. Aap kaisa mehsoos kar rahe hain?',
     },
   ]);
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -50,7 +50,7 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
   }, [isOpen, messages, isTyping]);
 
   const handleSendMessage = async (text: string) => {
-    if (!text.trim() || isTyping) return;
+    if (!text || !text.trim() || isTyping) return;
 
     const userMsgId = 'user-' + Date.now();
     const botMsgId = 'bot-' + Date.now();
@@ -66,10 +66,10 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
 
     try {
       const chatHistory = messages
-        .filter((m) => m.id !== 'welcome')
+        .filter((m) => m && m.id !== 'welcome')
         .map((m) => ({
           role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text,
+          content: m.text || '',
         }));
 
       const response = await fetch('/api/chat-stream', {
@@ -130,20 +130,26 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
-      <div className="w-full sm:max-w-lg h-[90vh] sm:h-[680px] bg-white text-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden relative">
+    <div
+      className="fixed inset-0 z-[100] bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="w-full sm:max-w-lg h-[92vh] sm:h-[680px] bg-white text-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Top Header */}
-        <header className="flex justify-between items-center w-full px-5 py-3.5 bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20">
+        <header className="flex justify-between items-center w-full px-5 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-20 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-700 to-emerald-600 flex items-center justify-center text-white shadow-sm">
-              <Sparkles size={20} className="text-emerald-100" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-green-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20 border border-emerald-300/30">
+              <Bot size={22} className="text-white" />
             </div>
             <div>
               <h2 className="font-serif text-lg font-bold text-slate-900 leading-tight">
-                {brandName} Saathi
+                AI Saathi
               </h2>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Trauma-Informed & Legal Support AI
+              <p className="text-[11px] text-emerald-700 font-semibold">
+                AASRA Legal & Mental Support AI
               </p>
             </div>
           </div>
@@ -156,7 +162,7 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
                   onClose();
                   onOpenVoice();
                 }}
-                className="h-8 px-3 bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
+                className="h-8 px-3 bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer"
                 title="Voice Call"
               >
                 <Volume2 size={14} />
@@ -175,14 +181,18 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
         </header>
 
         {/* Chat Canvas (Scrollable) */}
-        <main className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-slate-50/50 scroll-smooth">
+        <main className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-slate-50 scroll-smooth">
           {/* AASRA Avatar Card */}
           <div className="flex flex-col items-center justify-center my-2 text-center">
-            <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-teal-600 shadow-md bg-teal-50 flex items-center justify-center mb-2">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-emerald-600 shadow-md bg-emerald-50 flex items-center justify-center mb-2">
               <img
                 className="object-cover w-full h-full"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0Lms7vC5-s47S40McU_AQ9QTP6BC5tbvxXshex66kXxe15ccYsi9a3ljsJCEYMRiQpG0KveVU6-Dq_oBV0TWvITZqNGy4RirSv2U6rM3ee7hH8vwL3KLZ5PXEx-6T3zdY0xVZuDsfpJiaGZ0Nkob6S4qgQrOhC_yrjwGwbSuyyewfXgZvoU92NEhYL-k_svdpw6NGN6tjs1GJO5eQLY134n0JeVXXOf-sFuccjQQrKPnb36RMtLKgIQ"
                 alt="AASRA Avatar"
+                onError={(e) => {
+                  // Fallback to stylized SVG icon if image cannot be loaded
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
               />
             </div>
             <p className="text-xs text-slate-500 font-medium">

@@ -438,18 +438,25 @@ export default function App() {
           )}
         </main>
 
-        {/* Floating AI Chat Assistant Trigger Button */}
+        {/* Floating AI Chat Assistant Trigger Button (Always fixed and floating as screen moves) */}
         {!isOnboarding && !settings.isOffline && (
           <button
             id="btn-floating-ai-chat"
             type="button"
-            onClick={() => setIsChatModalOpen(true)}
-            className="absolute bottom-20 right-4 z-30 px-3.5 py-2 rounded-full bg-gradient-to-tr from-amber-600 via-rose-600 to-indigo-600 text-white shadow-xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20"
-            title="Aasra AI Chat Assistant"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsChatModalOpen(true);
+            }}
+            className="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-[90] px-4 py-2.5 rounded-full bg-gradient-to-tr from-emerald-600 via-teal-600 to-green-500 text-white shadow-2xl shadow-emerald-900/30 flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer border-2 border-white/60 backdrop-blur-sm hover:shadow-emerald-600/40"
+            title="AI Saathi Chat Assistant"
+            aria-label="Open AI Saathi Chat Assistant"
           >
-            <Bot size={16} />
-            <span className="text-xs font-serif font-bold">AI Saathi</span>
-            <Sparkles size={12} className="text-amber-200" />
+            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+              <Bot size={16} className="text-white" />
+            </div>
+            <span className="text-sm font-serif font-bold tracking-wide">AI Saathi</span>
+            <Sparkles size={14} className="text-emerald-200 animate-pulse" />
           </button>
         )}
 

@@ -4,6 +4,7 @@
  * Description: Chat Message Bubble Component for User and Assistant turns.
  * Features clean formatted markdown rendering for lists, headers, bold text,
  * without displaying raw asterisk markdown artifacts.
+ * Safe against null / undefined / empty text inputs.
  * ================================================================================
  */
 
@@ -21,13 +22,17 @@ interface ChatMessageProps {
 }
 
 // Clean markdown parser that eliminates raw ** and formats bold, headers, and lists
-export function renderFormattedMarkdown(text: string) {
-  const lines = text.split('\n');
+export function renderFormattedMarkdown(text: string = '') {
+  const safeText = typeof text === 'string' ? text : String(text || '');
+  if (!safeText.trim()) return null;
+
+  const lines = safeText.split('\n');
   const elements: React.ReactNode[] = [];
   let inList = false;
   let listItems: React.ReactNode[] = [];
 
   const parseInline = (str: string): React.ReactNode => {
+    if (!str) return '';
     // Bold: **text**
     const parts = str.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
@@ -43,7 +48,7 @@ export function renderFormattedMarkdown(text: string) {
   };
 
   lines.forEach((line, idx) => {
-    const trimmed = line.trim();
+    const trimmed = (line || '').trim();
     if (!trimmed) {
       if (inList) {
         elements.push(
@@ -59,19 +64,19 @@ export function renderFormattedMarkdown(text: string) {
 
     if (trimmed.startsWith('### ')) {
       elements.push(
-        <h3 key={idx} className="font-serif font-bold text-sm sm:text-base text-teal-800 mt-2.5 mb-1">
+        <h3 key={idx} className="font-serif font-bold text-sm sm:text-base text-emerald-800 mt-2.5 mb-1">
           {parseInline(trimmed.slice(4))}
         </h3>
       );
     } else if (trimmed.startsWith('## ')) {
       elements.push(
-        <h2 key={idx} className="font-serif font-bold text-base sm:text-lg text-teal-900 mt-3 mb-1">
+        <h2 key={idx} className="font-serif font-bold text-base sm:text-lg text-emerald-900 mt-3 mb-1">
           {parseInline(trimmed.slice(3))}
         </h2>
       );
     } else if (trimmed.startsWith('# ')) {
       elements.push(
-        <h1 key={idx} className="font-serif font-bold text-lg sm:text-xl text-teal-950 mt-3.5 mb-1.5">
+        <h1 key={idx} className="font-serif font-bold text-lg sm:text-xl text-emerald-950 mt-3.5 mb-1.5">
           {parseInline(trimmed.slice(2))}
         </h1>
       );
@@ -88,7 +93,7 @@ export function renderFormattedMarkdown(text: string) {
       const prefix = match ? match[0] : '';
       elements.push(
         <div key={idx} className="flex items-start gap-1.5 my-1 text-xs sm:text-sm text-slate-700 leading-relaxed">
-          <span className="font-bold text-teal-700 shrink-0">{prefix}</span>
+          <span className="font-bold text-emerald-700 shrink-0">{prefix}</span>
           <div className="flex-1">{parseInline(trimmed.slice(prefix.length))}</div>
         </div>
       );
@@ -124,17 +129,20 @@ export function renderFormattedMarkdown(text: string) {
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+  if (!message) return null;
+
   const isUser = message.sender === 'user';
+  const textContent = message.text || '';
 
   if (isUser) {
     return (
       <div className="flex items-end justify-end gap-2 w-full">
-        <div className="bg-teal-700 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-sm max-w-[85%] sm:max-w-[80%]">
+        <div className="bg-emerald-700 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-sm max-w-[85%] sm:max-w-[80%]">
           <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">
-            {message.text}
+            {textContent}
           </p>
         </div>
-        <div className="w-7 h-7 rounded-full bg-teal-100 flex items-center justify-center text-teal-800 shrink-0 mb-1">
+        <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 shrink-0 mb-1">
           <User size={15} />
         </div>
       </div>
@@ -143,11 +151,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   return (
     <div className="flex items-start gap-2.5 w-full">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-600 flex-shrink-0 flex items-center justify-center text-white shadow-xs mt-1">
-        <Heart size={16} className="fill-white/80" />
+      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 via-teal-600 to-green-500 flex-shrink-0 flex items-center justify-center text-white shadow-xs mt-1">
+        <Bot size={16} className="text-white" />
       </div>
       <div className="bg-white text-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-xs shadow-xs border border-slate-200/80 max-w-[85%] sm:max-w-[80%]">
-        {renderFormattedMarkdown(message.text)}
+        {renderFormattedMarkdown(textContent)}
       </div>
     </div>
   );
