@@ -44,7 +44,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
-      className="sticky bottom-0 z-30 bg-[#fef8f3]/95 backdrop-blur-md border-t border-[#ded9d4] px-3 py-2 flex items-center justify-around"
+      className="md:hidden sticky bottom-0 z-30 bg-[#fef8f3]/95 backdrop-blur-md border-t border-[#ded9d4] px-3 py-2 flex items-center justify-around shadow-lg"
       role="navigation"
       aria-label="Main Navigation"
     >

@@ -13,7 +13,8 @@ import tempfile
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 base_dir = Path(__file__).resolve().parent.parent
@@ -321,20 +322,21 @@ def reset_session_history():
     return {"status": "reset", "history": CASE_PROFILE["history"]}
 
 
+dist_dir = base_dir / "dist"
+if (dist_dir / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=str(dist_dir / "assets")), name="assets")
+
+
 @app.get("/", response_class=HTMLResponse)
 def serve_user_interface():
     """
-    Serves the primary web user interface.
+    Serves the primary React web user interface.
     """
-    current_dir = Path(__file__).resolve().parent
-    html_path = current_dir / "index.html"
-    if not html_path.exists():
-        html_path = current_dir.parent / "voice agent" / "index.html"
-
-    if html_path.exists():
-        with open(html_path, "r", encoding="utf-8") as f:
+    react_index = base_dir / "dist" / "index.html"
+    if react_index.exists():
+        with open(react_index, "r", encoding="utf-8") as f:
             return f.read()
-    return "<h1>Aasra</h1><p>index.html not found.</p>"
+    return "<h1>Aasra</h1><p>Please run 'npm run build' to generate the React frontend.</p>"
 
 
 if __name__ == "__main__":

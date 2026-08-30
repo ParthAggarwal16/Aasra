@@ -76,23 +76,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <div
       id="screen-home-mood"
-      className="flex flex-col px-5 py-6 max-w-md mx-auto"
+      className="flex flex-col px-4 sm:px-8 py-6 max-w-4xl mx-auto w-full"
     >
       {/* Title */}
       <div className="text-center mb-7">
         <h1
           id="home-mood-heading"
-          className="font-serif text-2xl sm:text-3xl font-bold text-[#1d1b19] tracking-tight leading-snug mb-2"
+          className="font-serif text-2xl sm:text-4xl font-bold text-[#1d1b19] tracking-tight leading-snug mb-2"
         >
           Aaj aap kaisa mehsoos kar rahe hain?
         </h1>
-        <p className="text-lg text-[#594238] font-normal">
+        <p className="text-base sm:text-xl text-[#594238] font-normal">
           How are you feeling today?
         </p>
       </div>
 
-      {/* 2x2 Grid of Moods matching Image 7 */}
-      <div className="grid grid-cols-2 gap-4 w-full">
+      {/* Grid of Moods (2 cols on mobile, 4 cols on desktop) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
         {moods.map((m) => {
           const isSelected = selected === m.id;
           return (

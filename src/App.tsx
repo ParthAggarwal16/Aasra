@@ -254,15 +254,17 @@ export default function App() {
   return (
     <div
       id="app-root-container"
-      className="min-h-screen bg-[#ede7e2]/70 flex items-center justify-center p-0 sm:p-4 md:p-6"
+      className="min-h-screen bg-gradient-to-br from-[#f8f3ee] via-[#ede7e2] to-[#e4ded8] flex flex-col items-center justify-start p-0 sm:p-4 md:p-6"
     >
-      {/* Mobile Shell Frame */}
-      <div className="w-full max-w-md bg-[#fef8f3] min-h-screen sm:min-h-[844px] sm:max-h-[920px] sm:rounded-[36px] shadow-2xl border-0 sm:border-8 sm:border-[#32302d]/90 flex flex-col justify-between overflow-hidden relative">
+      {/* Full Responsive Shell */}
+      <div className="w-full max-w-5xl bg-[#fef8f3] min-h-screen sm:min-h-[860px] sm:rounded-3xl shadow-xl border border-[#ded9d4]/80 flex flex-col justify-between overflow-hidden relative">
         {/* Header Bar */}
         <Header
           brandName={settings.brandName}
           screenTitleText={getScreenNarrationText()}
           subtitle="AI-Assisted Support & Risk Assessment"
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
           onProfileClick={() => setCurrentScreen('privacy_settings')}
           isOffline={settings.isOffline}
           onToggleOffline={handleToggleOffline}
@@ -273,7 +275,7 @@ export default function App() {
         {/* Screen Content Router */}
         <main
           id="main-screen-content"
-          className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar pb-6"
+          className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar pb-8"
         >
           {currentScreen === 'welcome' && (
             <WelcomeScreen
