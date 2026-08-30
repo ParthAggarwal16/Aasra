@@ -264,10 +264,10 @@ export default function App() {
   return (
     <div
       id="app-root-container"
-      className="min-h-screen bg-gradient-to-br from-[#f8f3ee] via-[#ede7e2] to-[#e4ded8] flex flex-col items-center justify-start p-0 sm:p-4 md:p-6"
+      className="min-h-screen bg-slate-100/70 flex flex-col items-center justify-start p-0 sm:p-4 md:p-6"
     >
       {/* Full Responsive Shell */}
-      <div className="w-full max-w-5xl bg-[#fef8f3] min-h-screen sm:min-h-[860px] sm:rounded-3xl shadow-xl border border-[#ded9d4]/80 flex flex-col justify-between overflow-hidden relative">
+      <div className="w-full max-w-5xl bg-white min-h-screen sm:min-h-[860px] sm:rounded-3xl shadow-xl border border-slate-200/80 flex flex-col justify-between overflow-hidden relative">
         {/* Header Bar */}
         <Header
           brandName={settings.brandName}
@@ -476,6 +476,7 @@ export default function App() {
           isOpen={isChatModalOpen}
           onClose={() => setIsChatModalOpen(false)}
           brandName={settings.brandName}
+          onOpenVoice={() => setIsCallModalOpen(true)}
         />
       </div>
     </div>

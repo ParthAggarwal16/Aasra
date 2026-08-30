@@ -4,6 +4,7 @@
  * Description: Primary Daily Mood Check-In and Support Recommendation Screen.
  * Presents 4-quadrant mood check-in buttons with audio feedback, empathetic response
  * cards, and quick navigation shortcuts to Companion Calls, Activity, and Community.
+ * Clean white / slate theme.
  * ================================================================================
  */
 
@@ -40,8 +41,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       english: 'Very Good',
       speech: 'Bohot Accha! Yeh jaan kar bohot khushi hui ki aap khush hain.',
       message: 'Yeh sunkar humein bohot khushi hui! Aaj ka din khushnuma rahe.',
-      color: 'from-[#ffedd5] to-[#fef8f3]',
-      ringColor: 'border-[#9e3d00]',
+      color: 'from-emerald-50 to-white',
+      ringColor: 'border-emerald-600',
     },
     {
       id: 'good' as MoodType,
@@ -50,8 +51,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       english: 'Good',
       speech: 'Theek! Achhi baat hai, hum aapke saath hain.',
       message: 'Achha laga sunkar! Apne din ki shuruat shanti se karein.',
-      color: 'from-[#ffedd5] to-[#fef8f3]',
-      ringColor: 'border-[#9e3d00]',
+      color: 'from-teal-50 to-white',
+      ringColor: 'border-teal-600',
     },
     {
       id: 'okay' as MoodType,
@@ -60,8 +61,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       english: 'Okay',
       speech: 'Theek-thaak. Koi baat nahi, thoda samay apne liye nikalein.',
       message: 'Kabhi kabhi thakan mehsoos hona aam baat hai. 2 minute shanti se baithein.',
-      color: 'from-[#ffedd5] to-[#fef8f3]',
-      ringColor: 'border-[#9e3d00]',
+      color: 'from-amber-50 to-white',
+      ringColor: 'border-amber-600',
     },
     {
       id: 'not_good' as MoodType,
@@ -70,8 +71,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       english: 'Not So Good',
       speech: 'Accha nahi lag raha? Chinta mat kijiye, hum hamesha aapke saath hain. Kisi se baat karein.',
       message: 'Chinta mat kijiye, aap akele nahi hain. Kya aap kisi se baat karna chahte hain?',
-      color: 'from-[#fed7aa]/30 to-[#fef8f3]',
-      ringColor: 'border-[#9e3d00]',
+      color: 'from-rose-50 to-white',
+      ringColor: 'border-rose-600',
     },
   ];
 
@@ -91,92 +92,111 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <div className="text-center mb-7">
         <h1
           id="home-mood-heading"
-          className="font-serif text-2xl sm:text-4xl font-bold text-[#1d1b19] tracking-tight leading-snug mb-2"
+          className="font-serif text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-snug mb-2"
         >
           Aaj aap kaisa mehsoos kar rahe hain?
         </h1>
-        <p className="text-base sm:text-xl text-[#594238] font-normal">
+        <p className="text-base sm:text-xl text-slate-600 font-normal">
           How are you feeling today?
         </p>
       </div>
 
-      {/* Grid of Moods (2 cols on mobile, 4 cols on desktop) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
+      {/* Mood Buttons Grid (Responsive: 2 cols on mobile, 4 cols on tablet/desktop) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {moods.map((m) => {
           const isSelected = selected === m.id;
           return (
             <button
               key={m.id}
-              id={`btn-mood-${m.id}`}
+              id={`mood-btn-${m.id}`}
               type="button"
               onClick={() => handleMoodClick(m)}
-              className={`flex flex-col items-center justify-center p-5 rounded-3xl bg-[#f8f3ee] border transition-all duration-200 cursor-pointer shadow-xs active:scale-95 ${
+              className={`flex flex-col items-center justify-center p-4 sm:p-6 rounded-3xl border-2 transition-all cursor-pointer bg-gradient-to-b ${m.color} ${
                 isSelected
-                  ? 'border-[#9e3d00] ring-3 ring-[#ffddb9] bg-[#fffaf5]'
-                  : 'border-[#ded9d4]/90 hover:border-[#8c7166]'
+                  ? `${m.ringColor} shadow-md scale-[1.02] ring-2 ring-teal-600/30`
+                  : 'border-slate-200 hover:border-slate-300 hover:shadow-xs'
               }`}
             >
-              {/* Emoji Display with soft lighting */}
-              <div className="text-6xl sm:text-7xl mb-3 transform transition-transform group-hover:scale-110 select-none">
-                {m.emoji}
-              </div>
-
-              <h2 className="font-serif text-xl font-bold text-[#1d1b19] text-center leading-tight mb-1">
+              <span className="text-4xl sm:text-5xl mb-3 filter drop-shadow-xs">{m.emoji}</span>
+              <span className="font-serif text-base sm:text-lg font-bold text-slate-900 text-center leading-tight">
                 {m.hindi}
-              </h2>
-
-              <p className="text-sm text-[#594238] text-center">
+              </span>
+              <span className="text-xs sm:text-sm text-slate-500 text-center mt-0.5">
                 {m.english}
-              </p>
+              </span>
             </button>
           );
         })}
       </div>
 
-      {/* Empathetic Responsive Box */}
-      {selected && (
-        <div className="mt-7 p-5 rounded-3xl bg-[#f8f3ee] border border-[#ded9d4] shadow-xs text-left animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 text-[#9e3d00] font-serif font-bold text-lg mb-2">
-            <Sparkles size={20} className="text-[#9e3d00]" />
-            <span>AASRA Saathi</span>
-          </div>
-
-          <p className="text-base text-[#1d1b19] leading-relaxed mb-4">
-            {moods.find((m) => m.id === selected)?.message}
-          </p>
-
-          {selected === 'not_good' || selected === 'okay' ? (
-            <div className="flex flex-col gap-2.5">
-              <button
-                id="btn-quick-companion"
-                onClick={onNavigateToHelp}
-                className="w-full py-3 px-4 rounded-xl bg-[#9e3d00] text-white font-serif font-semibold text-base flex items-center justify-center gap-2 hover:bg-[#7c2e00] transition-colors"
-              >
-                <PhoneCall size={18} />
-                <span>Kisi se baat karein (Connect)</span>
-              </button>
-
-              <button
-                id="btn-quick-meditation"
-                onClick={onNavigateToActivity}
-                className="w-full py-3 px-4 rounded-xl bg-[#ffddb9] text-[#835100] font-serif font-semibold text-base flex items-center justify-center gap-2 hover:bg-[#fed7aa] transition-colors"
-              >
-                <span>2-Minute Shanti Activity</span>
-                <ArrowRight size={18} />
-              </button>
+      {/* Feedback Card */}
+      {showFeedback && selected && (
+        <div
+          id="home-mood-feedback-card"
+          className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm mb-6 animate-in fade-in slide-in-from-top-2"
+        >
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-700 shrink-0 mt-0.5">
+              <Sparkles size={22} />
             </div>
-          ) : (
-            <button
-              id="btn-quick-community"
-              onClick={onNavigateToCommunity}
-              className="w-full py-3 px-4 rounded-xl bg-[#006b58] text-white font-serif font-semibold text-base flex items-center justify-center gap-2 hover:bg-[#005142] transition-colors"
-            >
-              <HeartHandshake size={18} />
-              <span>Community Stories Padhein</span>
-            </button>
-          )}
+            <div className="flex-1">
+              <h3 className="font-serif text-lg font-bold text-slate-900 mb-1">
+                AASRA Saathi Sandesh
+              </h3>
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
+                {moods.find((m) => m.id === selected)?.message}
+              </p>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Action Recommendation Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* Card 1: Companion Talk */}
+        <button
+          type="button"
+          onClick={onNavigateToHelp}
+          className="text-left p-4 sm:p-5 rounded-3xl bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between group cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-700 group-hover:scale-105 transition-transform">
+              <PhoneCall size={22} />
+            </div>
+            <div>
+              <h4 className="font-serif text-base font-bold text-slate-900">
+                Saathi se baat karein
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Talk to our voice companion
+              </p>
+            </div>
+          </div>
+          <ArrowRight size={18} className="text-slate-400 group-hover:text-teal-700 group-hover:translate-x-1 transition-all" />
+        </button>
+
+        {/* Card 2: Community Support */}
+        <button
+          type="button"
+          onClick={onNavigateToCommunity}
+          className="text-left p-4 sm:p-5 rounded-3xl bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between group cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-700 group-hover:scale-105 transition-transform">
+              <HeartHandshake size={22} />
+            </div>
+            <div>
+              <h4 className="font-serif text-base font-bold text-slate-900">
+                Community se judein
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Read inspiring peer stories
+              </p>
+            </div>
+          </div>
+          <ArrowRight size={18} className="text-slate-400 group-hover:text-indigo-700 group-hover:translate-x-1 transition-all" />
+        </button>
+      </div>
     </div>
   );
 };

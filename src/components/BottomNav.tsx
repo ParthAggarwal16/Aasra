@@ -3,7 +3,7 @@
  * File: src/components/BottomNav.tsx
  * Description: Mobile Bottom Navigation Bar for AASRA. Provides touch-friendly
  * switching between Home, Help, Activity, Community, and Emergency call screens.
- * Automatically hidden on medium and large desktop screens.
+ * Clean white theme with teal active states.
  * ================================================================================
  */
 
@@ -53,7 +53,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
-      className="md:hidden sticky bottom-0 z-30 bg-[#fef8f3]/95 backdrop-blur-md border-t border-[#ded9d4] px-3 py-2 flex items-center justify-around shadow-lg"
+      className="md:hidden sticky bottom-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around shadow-lg"
       role="navigation"
       aria-label="Main Navigation"
     >
@@ -68,20 +68,20 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             onClick={() => onTabChange(tab.id)}
             className={`flex flex-col items-center justify-center min-w-[60px] py-1 px-1.5 rounded-xl transition-all ${
               isActive
-                ? 'text-[#9e3d00] font-bold'
-                : 'text-[#594238]/80 hover:text-[#1d1b19] font-medium'
+                ? 'text-teal-700 font-bold'
+                : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
             <div
               className={`p-1.5 rounded-xl transition-all ${
-                isActive ? 'bg-[#ffddb9]/60 text-[#9e3d00]' : ''
+                isActive ? 'bg-teal-50 text-teal-700' : ''
               }`}
             >
               <Icon size={22} strokeWidth={isActive ? 2.4 : 1.8} />
             </div>
             <span
               className={`text-[12px] mt-0.5 tracking-tight whitespace-nowrap ${
-                isActive ? 'font-bold text-[#9e3d00]' : 'text-[#594238]'
+                isActive ? 'font-bold text-teal-700' : 'text-slate-500'
               }`}
             >
               {tab.label}
