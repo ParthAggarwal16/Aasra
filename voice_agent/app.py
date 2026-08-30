@@ -136,12 +136,55 @@ def health_check():
 @app.get("/api/config")
 def get_config():
     """
-    Returns public runtime configuration including ElevenLabs Agent ID.
+    Returns public runtime configuration including Bolna and ElevenLabs Agent IDs.
     """
     return {
-        "agent_id": settings.agent_id or getattr(settings, 'elevenlabs_agent_id', "") or "",
-        "has_elevenlabs": bool(settings.agent_id or getattr(settings, 'elevenlabs_agent_id', ""))
+        "agent_id": settings.agent_id or settings.elevenlabs_agent_id or "",
+        "bolna_agent_id": settings.bolna_agent_id or "",
+        "has_bolna": bool(settings.bolna_agent_id),
+        "has_elevenlabs": bool(settings.agent_id or settings.elevenlabs_agent_id)
     }
+
+
+@app.post("/api/bolna-session")
+async def create_bolna_session():
+    """
+    Securely creates a Bolna AI WebRTC voice call session.
+    The frontend calls this endpoint to obtain ephemeral session credentials
+    without exposing the Bolna API key in client-side code.
+    """
+    import httpx
+
+    bolna_agent_id = settings.bolna_agent_id
+    bolna_api_key = settings.bolna_api_key
+
+    if not bolna_agent_id:
+        raise HTTPException(status_code=400, detail="Bolna Agent ID is not configured.")
+
+    # If no API key is set, return agent_id for client-side direct connection
+    if not bolna_api_key:
+        return {"agent_id": bolna_agent_id, "mode": "direct"}
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.post(
+                "https://api.bolna.ai/web-call/freeswitch-session",
+                headers={
+                    "Authorization": f"Bearer {bolna_api_key}",
+                    "Content-Type": "application/json"
+                },
+                json={"agent_id": bolna_agent_id}
+            )
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return JSONResponse(
+                status_code=response.status_code,
+                content={"error": "Failed to create Bolna session", "detail": response.text}
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Bolna session error: {str(e)}")
 
 
 @app.get("/api/profile")

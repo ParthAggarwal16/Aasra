@@ -2,16 +2,17 @@
  * ================================================================================
  * File: src/components/CompanionCallModal.tsx
  * Description: Real-time Conversational Voice Companion Call Modal Component.
+ * Integrates Bolna AI WebRTC voice agent for end-to-end live voice conversations.
  * Features live microphone audio capture, HTML5 Canvas audio frequency waveform
- * visualizer, Web Speech / Groq AI integration (/api/voice-turn), dynamic distress
- * scoring display, live subtitles ("You Spoke" & "Aasra Companion"), and call controls
- * (Accept, Mute, Speaker, Hang up).
+ * visualizer, Bolna AI agent connection, call controls (Accept, Mute, Speaker,
+ * Hang up), and real-time call status display.
  * ================================================================================
  */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Sparkles, UserCheck, ShieldAlert, Heart } from 'lucide-react';
 import { speakText, stopSpeaking } from '../utils/speech';
+import { BolnaWebCall } from '@bolna/web-call';
 
 interface CompanionCallModalProps {
   isOpen: boolean;
@@ -33,23 +34,14 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [agentStatusText, setAgentStatusText] = useState<string>('Connecting...');
-  
-  // Real-time conversation dialogue state
-  const [currentCompanionText, setCurrentCompanionText] = useState<string>(
-    'Namaste! Main AASRA se aapka saathi hoon. Main aapki baat sunne ke liye yahan hoon. Aap kaisa mehsoos kar rahe hain?'
-  );
-  const [userTranscript, setUserTranscript] = useState<string>('');
-  const [distressScore, setDistressScore] = useState<number | null>(null);
-  const [riskTier, setRiskTier] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [bolnaError, setBolnaError] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const recognitionRef = useRef<any>(null);
-  const conversationHistoryRef = useRef<Array<{ role: string; content: string }>>([]);
+  const bolnaCallRef = useRef<BolnaWebCall | null>(null);
 
   // Ringing on incoming
   useEffect(() => {
@@ -57,8 +49,7 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
       cleanupCall();
       setCallState('incoming');
       setCallDuration(0);
-      setUserTranscript('');
-      setDistressScore(null);
+      setBolnaError(null);
       return;
     }
 
@@ -81,12 +72,17 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
   // Cleanup on unmount or end
   const cleanupCall = () => {
     stopSpeaking();
-    if (recognitionRef.current) {
+
+    // End Bolna WebRTC call
+    if (bolnaCallRef.current) {
       try {
-        recognitionRef.current.stop();
-      } catch (e) {}
-      recognitionRef.current = null;
+        bolnaCallRef.current.stop();
+      } catch (e) {
+        console.warn('Bolna call stop error:', e);
+      }
+      bolnaCallRef.current = null;
     }
+
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
@@ -145,136 +141,55 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
     }
   };
 
-  // Start Speech Recognition loop
-  const startSpeechRecognition = () => {
-    const SpeechRecognitionClass =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognitionClass) {
-      setAgentStatusText('Aasra is speaking...');
-      return;
-    }
-
-    const recognition = new SpeechRecognitionClass();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'hi-IN'; // Supports Hindi / Hinglish and English mixed
-
-    recognition.onresult = async (event: any) => {
-      const lastIndex = event.results.length - 1;
-      const spokenText = event.results[lastIndex][0].transcript.trim();
-
-      if (spokenText) {
-        setUserTranscript(spokenText);
-        await processUserVoiceTurn(spokenText);
-      }
-    };
-
-    recognition.onerror = (err: any) => {
-      console.warn('Speech recognition error:', err);
-    };
-
-    recognition.onend = () => {
-      // Auto restart if call is still active
-      if (callState === 'connected' && recognitionRef.current) {
-        try {
-          recognitionRef.current.start();
-        } catch (e) {}
-      }
-    };
-
-    try {
-      recognition.start();
-      recognitionRef.current = recognition;
-    } catch (e) {}
-  };
-
-  // Process user speech via Groq AI backend (/api/voice-turn)
-  const processUserVoiceTurn = async (text: string) => {
-    setIsProcessing(true);
-    setAgentStatusText('Aasra is thinking...');
-    
-    // Append to memory
-    conversationHistoryRef.current.push({ role: 'user', content: text });
-
-    try {
-      const response = await fetch('/api/voice-turn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          transcript: text,
-          dialogue_history: conversationHistoryRef.current,
-          case_context: 'Victim Support Ongoing Voice Checkin',
-          reported_threat:
-            text.toLowerCase().includes('threat') ||
-            text.toLowerCase().includes('dhamki') ||
-            text.toLowerCase().includes('darr') ||
-            text.toLowerCase().includes('help'),
-          language: 'hi',
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const companionReply = data.spoken_response || data.response_text;
-        
-        setCurrentCompanionText(companionReply);
-        conversationHistoryRef.current.push({ role: 'assistant', content: companionReply });
-
-        if (typeof data.distress_score === 'number') {
-          setDistressScore(Math.round(data.distress_score));
-          setRiskTier(data.risk_tier || 'Low Risk');
-        }
-
-        // Speak reply if speaker is enabled
-        if (isSpeakerOn) {
-          setAgentStatusText('Aasra is speaking...');
-          speakText(companionReply);
-        } else {
-          setAgentStatusText('Listening to your voice...');
-        }
-      } else {
-        fallbackReply(text);
-      }
-    } catch (err) {
-      fallbackReply(text);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const fallbackReply = (text: string) => {
-    const defaultReply = 'Main samajh raha hoon. Hum aapke saath hain, bilkul nishchint rahiye.';
-    setCurrentCompanionText(defaultReply);
-    if (isSpeakerOn) {
-      speakText(defaultReply);
-    }
-    setAgentStatusText('Listening to your voice...');
-  };
-
-  // Handle Accept Call
+  // Handle Accept Call — Start Bolna AI WebRTC voice call
   const handleAcceptCall = async () => {
     stopSpeaking();
     setCallState('connected');
-    setAgentStatusText('Connecting audio...');
+    setAgentStatusText('Connecting to AASRA Saathi AI...');
+    setBolnaError(null);
 
+    // Start microphone for visualizer
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
       startAudioVisualizer(stream);
-      startSpeechRecognition();
     } catch (err) {
       console.warn('Microphone permission denied or not available:', err);
     }
 
-    // Initial greeting
-    const welcomeSpeech =
-      'Namaste! Main AASRA se aapka saathi hoon. Main aapki baat sunne ke liye yahan hoon. Aap kaisa mehsoos kar rahe hain?';
-    setCurrentCompanionText(welcomeSpeech);
-    if (isSpeakerOn) {
-      speakText(welcomeSpeech);
+    // Initialize Bolna WebRTC call
+    try {
+      const bolnaCall = new BolnaWebCall({
+        sessionUrl: '/api/bolna-session',
+      });
+
+      // Event: Call started (agent connected)
+      bolnaCall.on('call-start', () => {
+        console.log('[Bolna] Agent connected — live voice call active');
+        setAgentStatusText('AASRA Saathi is listening...');
+      });
+
+      // Event: Call ended
+      bolnaCall.on('call-end', ({ reason }: { reason: string }) => {
+        console.log('[Bolna] Call ended:', reason);
+        setAgentStatusText('Call ended');
+        setCallState('ended');
+        cleanupCall();
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      });
+
+      // Start the WebRTC call
+      await bolnaCall.start();
+      bolnaCallRef.current = bolnaCall;
+
+      setAgentStatusText('AASRA Saathi is listening...');
+    } catch (err: any) {
+      console.error('[Bolna] Failed to start voice call:', err);
+      setBolnaError('Voice connection failed. Please try again.');
+      setAgentStatusText('Connection failed');
     }
-    setAgentStatusText('Listening to your voice...');
   };
 
   // Handle End Call
@@ -284,6 +199,19 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
     setTimeout(() => {
       onClose();
     }, 1200);
+  };
+
+  // Handle Mute toggle
+  const handleMuteToggle = () => {
+    const next = !isMuted;
+    setIsMuted(next);
+
+    // Mute local microphone stream
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getAudioTracks().forEach((t) => (t.enabled = !next));
+    }
+
+    setAgentStatusText(next ? 'Microphone muted' : 'AASRA Saathi is listening...');
   };
 
   const formatDuration = (secs: number) => {
@@ -333,11 +261,19 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
             </p>
           </div>
 
-          {/* Distress Badge if available */}
-          {distressScore !== null && (
-            <div className="mt-2 px-3 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-[11px] text-indigo-200 flex items-center gap-1.5">
-              <ShieldAlert size={12} className="text-indigo-400" />
-              <span>Distress Index: <strong>{distressScore}/100</strong> ({riskTier})</span>
+          {/* Bolna AI connection status */}
+          {callState === 'connected' && (
+            <div className="mt-2 px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] text-emerald-200 flex items-center gap-1.5">
+              <Sparkles size={12} className="text-emerald-400" />
+              <span>{agentStatusText}</span>
+            </div>
+          )}
+
+          {/* Error display */}
+          {bolnaError && (
+            <div className="mt-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/30 text-[11px] text-red-200 flex items-center gap-1.5">
+              <ShieldAlert size={12} className="text-red-400" />
+              <span>{bolnaError}</span>
             </div>
           )}
         </div>
@@ -349,34 +285,21 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
           </div>
         )}
 
-        {/* Live Spoken Dialogue Box */}
+        {/* Live AI Voice Conversation Panel */}
         {callState === 'connected' && (
           <div className="w-full space-y-2.5 my-2 animate-in fade-in">
-            {/* User Speech Bubble */}
-            {userTranscript && (
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 text-left">
-                <span className="text-[10px] font-bold text-[#8bf2d6] uppercase tracking-wider block mb-0.5">
-                  👤 You Spoke:
-                </span>
-                <p className="text-xs text-white/90 italic leading-relaxed">
-                  "{userTranscript}"
-                </p>
-              </div>
-            )}
-
-            {/* Companion AI Speech Box */}
+            {/* AI Voice Agent Info */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/15 text-left">
               <div className="flex items-center justify-between text-xs text-[#ffddb9] font-medium mb-1">
                 <div className="flex items-center gap-1.5">
                   <Sparkles size={14} />
-                  <span>Aasra Companion</span>
+                  <span>Bolna AI Voice Agent</span>
                 </div>
-                {isProcessing && (
-                  <span className="text-[10px] text-[#8bf2d6] animate-pulse">Groq AI analyzing...</span>
-                )}
+                <span className="text-[10px] text-[#8bf2d6] animate-pulse">● Live</span>
               </div>
-              <p className="text-xs sm:text-sm font-sans font-medium text-white leading-relaxed">
-                "{currentCompanionText}"
+              <p className="text-xs sm:text-sm font-sans font-medium text-white/80 leading-relaxed">
+                AASRA Saathi AI is listening and speaking with you in real-time via secure voice connection.
+                Speak naturally — the AI companion understands Hindi, Hinglish, and English.
               </p>
             </div>
           </div>
@@ -418,13 +341,7 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
                 {/* Mute */}
                 <button
                   type="button"
-                  onClick={() => {
-                    const next = !isMuted;
-                    setIsMuted(next);
-                    if (mediaStreamRef.current) {
-                      mediaStreamRef.current.getAudioTracks().forEach((t) => (t.enabled = !next));
-                    }
-                  }}
+                  onClick={handleMuteToggle}
                   className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                     isMuted ? 'bg-white text-black' : 'bg-white/20 text-white'
                   }`}

@@ -26,6 +26,8 @@ class VoiceAgentSettings(BaseModel):
     agent_id: str = os.getenv("AGENT_ID", "")
     elevenlabs_api_key: str = os.getenv("ELEVENLABS_API_KEY", "")
     elevenlabs_agent_id: str = os.getenv("ELEVENLABS_AGENT_ID", "")
+    bolna_agent_id: str = os.getenv("BOLNA_AGENT_ID", "")
+    bolna_api_key: str = os.getenv("BOLNA_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "openai/gpt-oss-120b")
     whisper_model: str = os.getenv("WHISPER_MODEL", "whisper-large-v3")
     audio_sample_rate: int = int(os.getenv("AUDIO_SAMPLE_RATE", "16000"))
