@@ -16,6 +16,8 @@ import { CreatePostScreen } from './screens/CreatePostScreen';
 import { SuccessScreen } from './screens/SuccessScreen';
 import { PrivacySettingsScreen } from './screens/PrivacySettingsScreen';
 import { CompanionCallModal } from './components/CompanionCallModal';
+import { ChatBotModal } from './components/ChatBotModal';
+import { Bot, Sparkles } from 'lucide-react';
 import { ScreenType, TabType, BrandName, MoodType, CommunityPost, UserSettings } from './types';
 import { stopSpeaking } from './utils/speech';
 
@@ -88,8 +90,9 @@ export default function App() {
     return INITIAL_POSTS;
   });
 
-  // Call modal states
+  // Call & Chat modal states
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [activeCallDetails, setActiveCallDetails] = useState({
     name: 'AASRA Saathi Companion',
     number: '1800-123-456',
@@ -330,6 +333,7 @@ export default function App() {
           {currentScreen === 'help_hub' && (
             <HelpHubScreen
               onTalkToSomeone={() => setCurrentScreen('companion_connect')}
+              onOpenChat={() => setIsChatModalOpen(true)}
               onTryActivity={() => {
                 setActiveTab('activity');
                 setCurrentScreen('activity');
@@ -422,6 +426,21 @@ export default function App() {
           )}
         </main>
 
+        {/* Floating AI Chat Assistant Trigger Button */}
+        {!isOnboarding && !settings.isOffline && (
+          <button
+            id="btn-floating-ai-chat"
+            type="button"
+            onClick={() => setIsChatModalOpen(true)}
+            className="absolute bottom-20 right-4 z-30 px-3.5 py-2 rounded-full bg-gradient-to-tr from-amber-600 via-rose-600 to-indigo-600 text-white shadow-xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20"
+            title="Aasra AI Chat Assistant"
+          >
+            <Bot size={16} />
+            <span className="text-xs font-serif font-bold">AI Saathi</span>
+            <Sparkles size={12} className="text-amber-200" />
+          </button>
+        )}
+
         {/* Persistent Bottom Navigation (matching all prompt screenshots) */}
         {!isOnboarding && (
           <BottomNav
@@ -431,13 +450,20 @@ export default function App() {
           />
         )}
 
-        {/* Interactive Companion / Emergency Call Modal */}
+        {/* Interactive Conversational Voice Companion Call Modal */}
         <CompanionCallModal
           isOpen={isCallModalOpen}
           brandName={settings.brandName}
           serviceName={activeCallDetails.name}
           phoneNumber={activeCallDetails.number}
           onClose={() => setIsCallModalOpen(false)}
+        />
+
+        {/* Interactive Streaming AI Chatbot Modal */}
+        <ChatBotModal
+          isOpen={isChatModalOpen}
+          onClose={() => setIsChatModalOpen(false)}
+          brandName={settings.brandName}
         />
       </div>
     </div>
