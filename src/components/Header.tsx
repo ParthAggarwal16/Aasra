@@ -53,9 +53,13 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         ) : (
           <div className="flex items-center gap-2.5">
-            {/* Logo Badge */}
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#9e3d00] to-amber-600 flex items-center justify-center text-white font-serif font-bold text-base shadow-sm">
-              {brandName === 'AASRA' ? 'आ' : 'स'}
+            {/* Vibe-Matching Compassionate Logo Badge */}
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#9e3d00] via-[#c2410c] to-[#ea580c] flex items-center justify-center text-white shadow-md shadow-[#9e3d00]/20 border border-white/30 shrink-0">
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3c-4.5 4-7 8-7 12a7 7 0 0 0 14 0c0-4-2.5-8-7-12Z" fill="rgba(255,255,255,0.25)"/>
+                <path d="M12 8v9"/>
+                <path d="M9 14.5c1.8 1.2 4.2 1.2 6 0"/>
+              </svg>
             </div>
             <div>
               <h1
