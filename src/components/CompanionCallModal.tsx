@@ -324,11 +324,6 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
           </p>
 
           <div className="flex items-center gap-2">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                callState === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-              }`}
-            />
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8bf2d6]">
               {callState === 'incoming'
                 ? 'Incoming Call...'

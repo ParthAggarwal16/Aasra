@@ -114,21 +114,6 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Offline simulator toggle */}
-        <button
-          id="btn-network-toggle"
-          onClick={onToggleOffline}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
-            isOffline
-              ? 'bg-[#ba1a1a]/10 border-[#ba1a1a]/30 text-[#ba1a1a]'
-              : 'bg-[#006b58]/10 border-[#006b58]/30 text-[#006b58]'
-          }`}
-          title={isOffline ? 'Offline mode active' : 'Online mode active'}
-        >
-          {isOffline ? <WifiOff size={14} /> : <Wifi size={14} />}
-          <span className="hidden sm:inline">{isOffline ? 'Offline' : 'Online'}</span>
-        </button>
-
         {/* Global Speaker button */}
         <SpeakerButton
           id="header-speaker-btn"

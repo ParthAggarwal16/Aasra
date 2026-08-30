@@ -249,10 +249,7 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
               <Sparkles size={20} className="text-amber-200" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-serif text-base font-bold text-white tracking-tight">{brandName} AI Saathi</h3>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              </div>
+              <h3 className="font-serif text-base font-bold text-white tracking-tight">{brandName} AI Saathi</h3>
               <p className="text-[11px] text-[#ded9d4]/80">Trauma-Informed & Legal Support Assistant</p>
             </div>
           </div>
