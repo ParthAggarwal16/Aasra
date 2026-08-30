@@ -12,6 +12,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Sparkles, UserCheck, ShieldAlert, Heart, Lock } from 'lucide-react';
 import { speakText, stopSpeaking } from '../utils/speech';
 import { BolnaWebCall } from '@bolna/web-call';
+import { buildApiUrl } from '../utils/api';
 
 interface CompanionCallModalProps {
   isOpen: boolean;
@@ -159,7 +160,7 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
     // Initialize Bolna WebRTC call
     try {
       const bolnaCall = new BolnaWebCall({
-        sessionUrl: '/api/bolna-session',
+        sessionUrl: buildApiUrl('/api/bolna-session'),
       });
 
       // Event: Call started (agent connected)

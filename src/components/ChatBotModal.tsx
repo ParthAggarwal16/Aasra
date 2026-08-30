@@ -15,6 +15,7 @@ import { QuickSuggestions } from './chatbot/QuickSuggestions';
 import { SupportEscalationCard } from './chatbot/SupportEscalationCard';
 import { TypingIndicator } from './chatbot/TypingIndicator';
 import { ChatInputArea } from './chatbot/ChatInputArea';
+import { buildApiUrl } from '../utils/api';
 
 interface ChatBotModalProps {
   isOpen: boolean;
@@ -72,7 +73,7 @@ export const ChatBotModal: React.FC<ChatBotModalProps> = ({
           content: m.text || '',
         }));
 
-      const response = await fetch('/api/chat-stream', {
+      const response = await fetch(buildApiUrl('/api/chat-stream'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
