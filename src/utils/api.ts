@@ -8,10 +8,10 @@ export function buildApiUrl(
     return normalizedPath;
   }
 
-  const apiBase = (env.VITE_API_BASE ?? 'https://aasra-backend-kej7.onrender.com').trim();
-  if (!apiBase) {
-    return normalizedPath;
-  }
+  const rawBase = env.VITE_API_BASE;
+  const apiBase = rawBase && rawBase.trim().length > 0
+    ? rawBase.trim()
+    : 'https://aasra-backend-kej7.onrender.com';
 
   const safeBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
   return new URL(normalizedPath, `${safeBase}/`).toString();
