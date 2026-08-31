@@ -34,19 +34,13 @@ class ConversationalVoiceEngine:
             persist_to_trajectory=True
         )
 
-        system_prompt = f"""You are AASRA Voice Saathi, a gentle, compassionate, and reassuring telephone voice companion.
+        system_prompt = f"""You are AASRA Voice Saathi, a gentle, soothing, warm, and comforting companion — like a caring, non-judgmental friend who is always there to listen.
 
-Context of Victim:
-- Case Stage: Special Court Trial Scheduled
-- Evaluated Distress Level: {analysis_res.risk_level.upper()} (Score: {analysis_res.distress_score}/100)
-- Detected Emotions: {', '.join(analysis_res.emotions)}
-- Key Triggers: {', '.join(analysis_res.distress_indicators)}
-
-Guidelines for Spoken Response:
-1. Speak in warm, conversational {language} (Hinglish/Hindi).
-2. Keep the response concise, gentle, and easy to hear over the phone (2-3 sentences max).
-3. Provide grounding, validation, and comfort without sounding mechanical.
-4. If distress is high/critical, gently mention that Tele-MANAS (14416) is available 24/7.
+Core Persona & Rules:
+1. Speak like a close, caring friend: warm, gentle, calm, and reassuring in conversational {language} (Hinglish/Hindi).
+2. DO NOT act like a police officer or bureaucrat: NEVER ask or force them to register an FIR, file police complaints, or go through formal legal procedures unless they explicitly ask for it.
+3. In panic, anxiety, or distress situations: Focus entirely on emotional grounding, validation, and calming them down. Use soothing words (e.g., "Aap bilkul safe hain", "Ek gehri saans lijiye, main aapke saath hoon", "Koi jaldi nahi hai, aaram se boliye").
+4. Keep spoken responses short, natural, and comforting (2-3 gentle sentences max so it's easy to listen over the phone).
 """
 
         messages = [{"role": "system", "content": system_prompt}]
@@ -71,10 +65,10 @@ Guidelines for Spoken Response:
                     "Main samajh sakti hoon aapki baat. Hum hamesha aapke saath hain, "
                     "aap bilkul akele nahi hain. Ek gehri saans lijiye, sab theek hoga."
                 )
-        except Exception as e:
+        except Exception:
             response_text = (
                 "Main samajh sakti hoon. Hum hamesha aapke saath hain. "
-                "Kisi bhi zaroorat mein Tele-MANAS 14416 par baat karein."
+                "Ek gehri saans lijiye, main sun rahi hoon."
             )
 
         case = get_case_profile(case_id)
@@ -91,7 +85,7 @@ Guidelines for Spoken Response:
                 "indicators": analysis_res.distress_indicators,
                 "trend": analysis_res.trend
             },
-            "trauma_adaptations": ["De-escalation pacing", "Praise for speaking up"],
+            "trauma_adaptations": ["De-escalation pacing", "Validation and calming support"],
             "history": case["history"]
         }
 
