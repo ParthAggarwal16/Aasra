@@ -8,7 +8,7 @@ export function buildApiUrl(
     return normalizedPath;
   }
 
-  const apiBase = (env.VITE_API_BASE ?? '').trim();
+  const apiBase = (env.VITE_API_BASE ?? 'https://aasra-backend-kej7.onrender.com').trim();
   if (!apiBase) {
     return normalizedPath;
   }
