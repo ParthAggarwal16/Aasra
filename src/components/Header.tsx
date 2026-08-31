@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { User, Home, HelpCircle, Calendar, Users, Phone, ArrowLeft } from 'lucide-react';
+import { User, Home, HelpCircle, Calendar, Users, Phone, ArrowLeft, Shield } from 'lucide-react';
 import { SpeakerButton } from './SpeakerButton';
 import { BrandName, TabType } from '../types';
 
@@ -23,6 +23,8 @@ interface HeaderProps {
   onToggleOffline: () => void;
   showBack?: boolean;
   onBack?: () => void;
+  isAdminView?: boolean;
+  onToggleAdminView?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -114,6 +116,24 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Actions */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        {/* Counselor / Admin Dashboard Switcher */}
+        {onToggleAdminView && (
+          <button
+            id="btn-toggle-admin-dashboard"
+            type="button"
+            onClick={onToggleAdminView}
+            className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
+              isAdminView
+                ? 'bg-slate-900 text-white border-slate-700 shadow-xs'
+                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200 shadow-2xs'
+            }`}
+            title={isAdminView ? "Switch to Patient View" : "Open Counselor / Admin Dashboard"}
+          >
+            <Shield size={14} className={isAdminView ? "text-emerald-400" : "text-emerald-700"} />
+            <span className="hidden sm:inline">{isAdminView ? "Patient View" : "Dashboard"}</span>
+          </button>
+        )}
+
         {/* Global Speaker button */}
         <SpeakerButton
           id="header-speaker-btn"

@@ -25,6 +25,8 @@ import { StoryDetailScreen } from './screens/StoryDetailScreen';
 import { CreatePostScreen } from './screens/CreatePostScreen';
 import { SuccessScreen } from './screens/SuccessScreen';
 import { PrivacySettingsScreen } from './screens/PrivacySettingsScreen';
+import { AdminDashboardScreen } from './screens/AdminDashboardScreen';
+import { AdminCaseDetailScreen } from './screens/AdminCaseDetailScreen';
 import { CompanionCallModal } from './components/CompanionCallModal';
 import { ChatBotModal } from './components/ChatBotModal';
 import { Bot, Sparkles } from 'lucide-react';
@@ -107,6 +109,10 @@ export default function App() {
     name: 'AASRA Saathi Companion',
     number: '1800-123-456',
   });
+
+  // Counselor / Admin View State
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('aasra_user_settings', JSON.stringify(settings));
@@ -268,11 +274,10 @@ export default function App() {
     >
       {/* Full Responsive Shell */}
       <div className="w-full max-w-5xl bg-white min-h-screen sm:min-h-[860px] sm:rounded-3xl shadow-xl border border-slate-200/80 flex flex-col justify-between overflow-hidden relative">
-        {/* Header Bar */}
+        {/* App Top Header Bar */}
         <Header
           brandName={settings.brandName}
           screenTitleText={getScreenNarrationText()}
-          subtitle="AI-Assisted Support & Risk Assessment"
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onProfileClick={() => setCurrentScreen('privacy_settings')}
@@ -280,6 +285,11 @@ export default function App() {
           onToggleOffline={handleToggleOffline}
           showBack={showHeaderBack}
           onBack={handleBack}
+          isAdminView={isAdminView}
+          onToggleAdminView={() => {
+            setIsAdminView(!isAdminView);
+            setSelectedCaseId(null);
+          }}
         />
 
         {/* Screen Content Router */}
@@ -287,159 +297,177 @@ export default function App() {
           id="main-screen-content"
           className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar pb-8"
         >
-          {currentScreen === 'welcome' && (
-            <WelcomeScreen
-              onContinue={() => setCurrentScreen('phone_login')}
-            />
-          )}
+          {isAdminView ? (
+            selectedCaseId ? (
+              <AdminCaseDetailScreen
+                caseId={selectedCaseId}
+                onBack={() => setSelectedCaseId(null)}
+              />
+            ) : (
+              <AdminDashboardScreen
+                onSelectCase={(caseId) => setSelectedCaseId(caseId)}
+                onNavigateToCases={() => setSelectedCaseId('1042')}
+                onNavigateToAlerts={() => setSelectedCaseId('1089')}
+                onSwitchToPatient={() => setIsAdminView(false)}
+              />
+            )
+          ) : (
+            <>
+              {currentScreen === 'welcome' && (
+                <WelcomeScreen
+                  onContinue={() => setCurrentScreen('phone_login')}
+                />
+              )}
 
-          {currentScreen === 'phone_login' && (
-            <PhoneLoginScreen
-              initialPhone={settings.phoneNumber}
-              onSubmitPhone={(phone) => {
-                setSettings({ ...settings, phoneNumber: phone, isLoggedIn: true });
-                setCurrentScreen('consent');
-              }}
-            />
-          )}
+              {currentScreen === 'phone_login' && (
+                <PhoneLoginScreen
+                  initialPhone={settings.phoneNumber}
+                  onSubmitPhone={(phone) => {
+                    setSettings({ ...settings, phoneNumber: phone, isLoggedIn: true });
+                    setCurrentScreen('consent');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'consent' && (
-            <ConsentScreen
-              onAccept={() => {
-                setSettings({ ...settings, hasConsented: true });
-                setCurrentScreen('home');
-                setActiveTab('home');
-              }}
-              onDecline={() => {
-                setCurrentScreen('home');
-                setActiveTab('home');
-              }}
-            />
-          )}
+              {currentScreen === 'consent' && (
+                <ConsentScreen
+                  onAccept={() => {
+                    setSettings({ ...settings, hasConsented: true });
+                    setCurrentScreen('home');
+                    setActiveTab('home');
+                  }}
+                  onDecline={() => {
+                    setCurrentScreen('home');
+                    setActiveTab('home');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'home' && (
-            <HomeScreen
-              currentMood={settings.currentMood}
-              onSelectMood={(mood) => {
-                setSettings({ ...settings, currentMood: mood });
-              }}
-              onNavigateToHelp={() => {
-                setActiveTab('help');
-                setCurrentScreen('help_hub');
-              }}
-              onNavigateToActivity={() => {
-                setActiveTab('activity');
-                setCurrentScreen('activity');
-              }}
-              onNavigateToCommunity={() => {
-                setActiveTab('community');
-                setCurrentScreen('community');
-              }}
-              onNavigateToCall={() => {
-                setActiveTab('call');
-                setCurrentScreen('emergency_call');
-              }}
-            />
-          )}
+              {currentScreen === 'home' && (
+                <HomeScreen
+                  currentMood={settings.currentMood}
+                  onSelectMood={(mood) => {
+                    setSettings({ ...settings, currentMood: mood });
+                  }}
+                  onNavigateToHelp={() => {
+                    setActiveTab('help');
+                    setCurrentScreen('help_hub');
+                  }}
+                  onNavigateToActivity={() => {
+                    setActiveTab('activity');
+                    setCurrentScreen('activity');
+                  }}
+                  onNavigateToCommunity={() => {
+                    setActiveTab('community');
+                    setCurrentScreen('community');
+                  }}
+                  onNavigateToCall={() => {
+                    setActiveTab('call');
+                    setCurrentScreen('emergency_call');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'help_hub' && (
-            <HelpHubScreen
-              onTalkToSomeone={() => setCurrentScreen('companion_connect')}
-              onOpenChat={() => setIsChatModalOpen(true)}
-              onTryActivity={() => {
-                setActiveTab('activity');
-                setCurrentScreen('activity');
-              }}
-              onCommunitySupport={() => {
-                setActiveTab('community');
-                setCurrentScreen('community');
-              }}
-              onEmergencyHelp={() => {
-                setActiveTab('call');
-                setCurrentScreen('emergency_call');
-              }}
-            />
-          )}
+              {currentScreen === 'help_hub' && (
+                <HelpHubScreen
+                  onTalkToSomeone={() => setCurrentScreen('companion_connect')}
+                  onOpenChat={() => setIsChatModalOpen(true)}
+                  onTryActivity={() => {
+                    setActiveTab('activity');
+                    setCurrentScreen('activity');
+                  }}
+                  onCommunitySupport={() => {
+                    setActiveTab('community');
+                    setCurrentScreen('community');
+                  }}
+                  onEmergencyHelp={() => {
+                    setActiveTab('call');
+                    setCurrentScreen('emergency_call');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'activity' && (
-            <ActivityScreen
-              onBack={() => {
-                setActiveTab('home');
-                setCurrentScreen('home');
-              }}
-            />
-          )}
+              {currentScreen === 'activity' && (
+                <ActivityScreen
+                  onBack={() => {
+                    setActiveTab('home');
+                    setCurrentScreen('home');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'companion_connect' && (
-            <CompanionConnectScreen
-              brandName={settings.brandName}
-              onCallMeNow={() => {
-                handleInitiateCall('1800-123-456', `${settings.brandName} Companion Support`);
-              }}
-              onLater={() => {
-                setCurrentScreen('help_hub');
-              }}
-            />
-          )}
+              {currentScreen === 'companion_connect' && (
+                <CompanionConnectScreen
+                  brandName={settings.brandName}
+                  onCallMeNow={() => {
+                    handleInitiateCall('1800-123-456', `${settings.brandName} Companion Support`);
+                  }}
+                  onLater={() => {
+                    setCurrentScreen('help_hub');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'emergency_call' && (
-            <EmergencyCallScreen
-              brandName={settings.brandName}
-              onDirectCall={handleInitiateCall}
-            />
-          )}
+              {currentScreen === 'emergency_call' && (
+                <EmergencyCallScreen
+                  brandName={settings.brandName}
+                  onDirectCall={handleInitiateCall}
+                />
+              )}
 
-          {currentScreen === 'offline_mode' && (
-            <OfflineModeScreen
-              brandName={settings.brandName}
-              onDirectCall={handleInitiateCall}
-            />
-          )}
+              {currentScreen === 'offline_mode' && (
+                <OfflineModeScreen
+                  brandName={settings.brandName}
+                  onDirectCall={handleInitiateCall}
+                />
+              )}
 
-          {currentScreen === 'community' && (
-            <CommunityScreen
-              posts={posts}
-              onToggleSupport={handleToggleSupport}
-              onOpenStoryDetail={(post) => setCurrentScreen('story_detail')}
-              onCreatePost={() => setCurrentScreen('create_post')}
-            />
-          )}
+              {currentScreen === 'community' && (
+                <CommunityScreen
+                  posts={posts}
+                  onToggleSupport={handleToggleSupport}
+                  onOpenStoryDetail={(post) => setCurrentScreen('story_detail')}
+                  onCreatePost={() => setCurrentScreen('create_post')}
+                />
+              )}
 
-          {currentScreen === 'story_detail' && (
-            <StoryDetailScreen
-              onBack={() => setCurrentScreen('community')}
-            />
-          )}
+              {currentScreen === 'story_detail' && (
+                <StoryDetailScreen
+                  onBack={() => setCurrentScreen('community')}
+                />
+              )}
 
-          {currentScreen === 'create_post' && (
-            <CreatePostScreen
-              onSubmitPost={handleCreatePost}
-              onCancel={() => setCurrentScreen('community')}
-            />
-          )}
+              {currentScreen === 'create_post' && (
+                <CreatePostScreen
+                  onSubmitPost={handleCreatePost}
+                  onCancel={() => setCurrentScreen('community')}
+                />
+              )}
 
-          {currentScreen === 'success' && (
-            <SuccessScreen
-              onGoHome={() => {
-                setActiveTab('home');
-                setCurrentScreen('home');
-              }}
-            />
-          )}
+              {currentScreen === 'success' && (
+                <SuccessScreen
+                  onGoHome={() => {
+                    setActiveTab('home');
+                    setCurrentScreen('home');
+                  }}
+                />
+              )}
 
-          {currentScreen === 'privacy_settings' && (
-            <PrivacySettingsScreen
-              settings={settings}
-              onSaveSettings={(updated) => {
-                setSettings((prev) => ({ ...prev, ...updated }));
-              }}
-              onBack={handleBack}
-            />
+              {currentScreen === 'privacy_settings' && (
+                <PrivacySettingsScreen
+                  settings={settings}
+                  onSaveSettings={(updated) => {
+                    setSettings((prev) => ({ ...prev, ...updated }));
+                  }}
+                  onBack={handleBack}
+                />
+              )}
+            </>
           )}
         </main>
 
-        {/* Floating AI Chat Assistant Trigger Button (Always fixed and floating as screen moves) */}
-        {!isOnboarding && !settings.isOffline && (
+        {/* Floating AI Chat Assistant Trigger Button (Patient Mode only) */}
+        {!isAdminView && !isOnboarding && !settings.isOffline && (
           <button
             id="btn-floating-ai-chat"
             type="button"
@@ -460,8 +488,8 @@ export default function App() {
           </button>
         )}
 
-        {/* Persistent Bottom Navigation (matching all prompt screenshots) */}
-        {!isOnboarding && (
+        {/* Persistent Bottom Navigation (Patient Mode only) */}
+        {!isAdminView && !isOnboarding && (
           <BottomNav
             activeTab={activeTab}
             brandName={settings.brandName}
