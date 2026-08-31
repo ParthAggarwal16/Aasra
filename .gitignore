@@ -1,6 +1,11 @@
 # Frontend
 node_modules/
 
+# Android Native Build
+android/
+*.apk
+capacitor.config.json
+
 # Backend & Environment
 .env
 !.env.example
