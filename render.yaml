@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: aasra-backend
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BOLNA_AGENT_ID
+        value: a7d2ff8b-2794-4d24-bf0d-321943561b4f
+      - key: BOLNA_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b

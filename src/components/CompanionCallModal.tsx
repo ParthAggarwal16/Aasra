@@ -166,7 +166,7 @@ export const CompanionCallModal: React.FC<CompanionCallModalProps> = ({
           stopSpeaking();
 
           try {
-            const res = await fetch('/api/voice-turn', {
+            const res = await fetch(buildApiUrl('/api/voice-turn'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({

@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Shield, AlertTriangle, PhoneCall, CheckCircle, Activity, Heart, Clock, FileText } from 'lucide-react';
 import { CaseItem } from '../types';
 import { CASES_DATA } from '../utils/mockCasesData';
+import { buildApiUrl } from '../utils/api';
 
 interface AdminCaseDetailScreenProps {
   caseId: string;
@@ -26,7 +27,7 @@ export const AdminCaseDetailScreen: React.FC<AdminCaseDetailScreenProps> = ({
   const matchedCase = CASES_DATA.find((c) => c.id === caseId) || CASES_DATA[0];
 
   useEffect(() => {
-    fetch('/api/profile')
+    fetch(buildApiUrl('/api/profile'))
       .then((res) => res.json())
       .then((data) => {
         setProfile(data);
