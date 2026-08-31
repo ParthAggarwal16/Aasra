@@ -38,6 +38,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleOffline,
   showBack = false,
   onBack,
+  isAdminView = false,
+  onToggleAdminView,
 }) => {
   const navItems = [
     { id: 'home' as TabType, label: 'Home', icon: Home },

@@ -56,19 +56,20 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, Error
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md bg-white p-6 rounded-3xl border border-slate-200 shadow-xl space-y-4">
-            <h2 className="font-serif text-xl font-bold text-slate-900">AASRA Platform</h2>
-            <p className="text-sm text-slate-600">Something went wrong while rendering the screen.</p>
+          <div className="max-w-lg bg-white p-6 rounded-3xl border border-slate-200 shadow-xl space-y-4 text-left">
+            <h2 className="font-serif text-xl font-bold text-slate-900">AASRA Platform Diagnostic</h2>
+            <p className="text-xs text-rose-600 font-mono bg-rose-50 p-3 rounded-xl border border-rose-200 break-all">
+              {this.state.error?.message || 'Unknown render error'}
+            </p>
             <button
               type="button"
               onClick={() => {
-                localStorage.removeItem('aasra_user_settings');
-                localStorage.removeItem('aasra_community_posts');
+                localStorage.clear();
                 window.location.reload();
               }}
-              className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold rounded-2xl cursor-pointer"
+              className="w-full py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold rounded-2xl cursor-pointer"
             >
-              Reset Settings & Refresh
+              Reset All LocalStorage & Reload
             </button>
           </div>
         </div>
