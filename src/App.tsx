@@ -3,8 +3,8 @@
  * File: src/App.tsx
  * Description: Root React Application Component for the AASRA Platform.
  * Manages global screen routing (Home, Help Hub, Activity, Community, Emergency,
- * Onboarding), persistent user settings, active tab state, simulated and live voice
- * companion calls, and the global floating AI Saathi support chatbot.
+ * Admin Dashboard), persistent user settings, active tab state, voice companion calls,
+ * and the global floating AI Saathi support chatbot.
  * ================================================================================
  */
 
@@ -32,6 +32,51 @@ import { ChatBotModal } from './components/ChatBotModal';
 import { Bot, Sparkles } from 'lucide-react';
 import { ScreenType, TabType, BrandName, MoodType, CommunityPost, UserSettings } from './types';
 import { stopSpeaking } from './utils/speech';
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('App Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md bg-white p-6 rounded-3xl border border-slate-200 shadow-xl space-y-4">
+            <h2 className="font-serif text-xl font-bold text-slate-900">AASRA Platform</h2>
+            <p className="text-sm text-slate-600">Something went wrong while rendering the screen.</p>
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem('aasra_user_settings');
+                localStorage.removeItem('aasra_community_posts');
+                window.location.reload();
+              }}
+              className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold rounded-2xl cursor-pointer"
+            >
+              Reset Settings & Refresh
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const INITIAL_POSTS: CommunityPost[] = [
   {
@@ -79,14 +124,15 @@ const DEFAULT_SETTINGS: UserSettings = {
   isOffline: false,
 };
 
-export default function App() {
+function MainApp() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [settings, setSettings] = useState<UserSettings>(() => {
     const saved = localStorage.getItem('aasra_user_settings');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return { ...DEFAULT_SETTINGS, ...parsed };
       } catch (e) {}
     }
     return DEFAULT_SETTINGS;
@@ -276,12 +322,12 @@ export default function App() {
       <div className="w-full max-w-5xl bg-white min-h-screen sm:min-h-[860px] sm:rounded-3xl shadow-xl border border-slate-200/80 flex flex-col justify-between overflow-hidden relative">
         {/* App Top Header Bar */}
         <Header
-          brandName={settings.brandName}
+          brandName={settings?.brandName || 'AASRA'}
           screenTitleText={getScreenNarrationText()}
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onProfileClick={() => setCurrentScreen('privacy_settings')}
-          isOffline={settings.isOffline}
+          isOffline={settings?.isOffline || false}
           onToggleOffline={handleToggleOffline}
           showBack={showHeaderBack}
           onBack={handleBack}
@@ -467,7 +513,7 @@ export default function App() {
         </main>
 
         {/* Floating AI Chat Assistant Trigger Button (Patient Mode only) */}
-        {!isAdminView && !isOnboarding && !settings.isOffline && (
+        {!isAdminView && !isOnboarding && !settings?.isOffline && (
           <button
             id="btn-floating-ai-chat"
             type="button"
@@ -492,7 +538,7 @@ export default function App() {
         {!isAdminView && !isOnboarding && (
           <BottomNav
             activeTab={activeTab}
-            brandName={settings.brandName}
+            brandName={settings?.brandName || 'AASRA'}
             onTabChange={handleTabChange}
           />
         )}
@@ -500,7 +546,7 @@ export default function App() {
         {/* Interactive Conversational Voice Companion Call Modal */}
         <CompanionCallModal
           isOpen={isCallModalOpen}
-          brandName={settings.brandName}
+          brandName={settings?.brandName || 'AASRA'}
           serviceName={activeCallDetails.name}
           phoneNumber={activeCallDetails.number}
           onClose={() => setIsCallModalOpen(false)}
@@ -510,10 +556,18 @@ export default function App() {
         <ChatBotModal
           isOpen={isChatModalOpen}
           onClose={() => setIsChatModalOpen(false)}
-          brandName={settings.brandName}
+          brandName={settings?.brandName || 'AASRA'}
           onOpenVoice={() => setIsCallModalOpen(true)}
         />
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <MainApp />
+    </ErrorBoundary>
   );
 }
