@@ -184,8 +184,8 @@ async def handle_voice_audio_upload(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/bolna-session", response_model=BolnaSessionResponse)
-async def mint_bolna_voice_session(payload: BolnaSessionRequest):
+@app.post("/api/bolna-session")
+async def mint_bolna_voice_session(payload: Optional[dict] = None):
     """Mints real-time WebRTC voice call session credentials with Bolna AI."""
     agent_id = settings.bolna_agent_id
     api_key = settings.bolna_api_key
@@ -201,26 +201,21 @@ async def mint_bolna_voice_session(payload: BolnaSessionRequest):
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
-                "https://api.bolna.dev/session",
-                json={"agent_id": agent_id, "user_id": payload.user_id or "anon_user_1042"},
+                "https://api.bolna.dev/web-call/session",
+                json={
+                    "agent_id": agent_id,
+                    "user_data": (payload.get("user_data") if payload else {}) or {"user_id": "anon_user_1042"}
+                },
                 headers=headers
             )
-            if response.status_code in [200, 201]:
-                data = response.json()
-                return BolnaSessionResponse(
-                    session_id=data.get("session_id", f"bolna-sess-{agent_id[:8]}"),
-                    agent_id=agent_id,
-                    status="active",
-                    token=data.get("token")
-                )
-    except Exception:
-        pass
-
-    return BolnaSessionResponse(
-        session_id=f"bolna-sess-{agent_id[:8]}",
-        agent_id=agent_id,
-        status="active"
-    )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise HTTPException(status_code=response.status_code, detail=response.text)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/reset-history")
