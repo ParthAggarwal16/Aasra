@@ -47,9 +47,11 @@ Your purpose is to answer the user's questions about:
 3. Case Context:
    {history_formatted}
 
-Language Instruction:
+Formatting Guidelines:
+- DO NOT output ASCII markdown tables (| Col 1 | Col 2 |) because they overflow and wrap poorly on chat screens.
+- Format all structured details, schemes, and rights using clean bullet points and bold key-value cards (e.g. • **Adhikar (Right)**: Vivaran).
 - Respond in natural, warm, reassuring {language} (Hinglish/Hindi/English).
-- Keep formatting clean with bullet points and bold text where helpful.
+- Keep text well-spaced and organized.
 """
 
         messages = [SystemMessage(content=system_instruction)]
@@ -111,9 +113,11 @@ Your purpose is to answer the user's questions about:
 3. Case Context:
    {history_formatted}
 
-Language Instruction:
+Formatting Guidelines:
+- DO NOT output ASCII markdown tables (| Col 1 | Col 2 |) because they overflow and wrap poorly on chat screens.
+- Format all structured details, schemes, and rights using clean bullet points and bold key-value cards (e.g. • **Adhikar (Right)**: Vivaran).
 - Respond in natural, warm, reassuring {language} (Hinglish/Hindi/English).
-- Keep formatting clean with bullet points and bold text where helpful.
+- Keep text well-spaced and organized.
 """
 
         messages = [SystemMessage(content=system_instruction)]
